@@ -1,76 +1,110 @@
 {
-  "name": "acao-rapida-templates",
-  "displayName": "Ação Rápida Templates",
-  "description": "Aplica templates .md ao código selecionado e copia para a área de transferência.",
+  "name": "quickpick-templates",
+  "displayName": "QuickPick Templates",
+  "description": "Apply templates .md to the selected code and copy to the clipboard.",
   "version": "0.0.1",
   "publisher": "Phanthro",
   "engines": {
     "vscode": "^1.90.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Phanthro/quickpick-template-extension"
+  },
+  "bugs": {
+    "url": "https://github.com/Phanthro/quickpick-template-extension/issues"
+  },
+  "homepage": "https://github.com/Phanthro/quickpick-template-extension",
+  "keywords": [
+    "vscode",
+    "extension",
+    "templates",
+    "quickpick",
+    "code"
+  ],
+  "author": {
+    "name": "Phanthro",
+    "url": "https://github.com/Phanthro"
+  },
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onCommand:acaoRapida.explainSnippetInContext",
-    "onCommand:acaoRapida.suggestImprovements",
-    "onCommand:acaoRapida.chooseTemplateFromFolder"
-  ],
   "main": "./out/extension.js",
+  "activationEvents": [
+    "onCommand:quickpickTemplates.explainSnippetInContext",
+    "onCommand:quickpickTemplates.suggestImprovements",
+    "onCommand:quickpickTemplates.chooseTemplateFromFolder"
+  ],
   "license": "MIT",
   "contributes": {
     "submenus": [
       {
-        "id": "acaoRapida.submenu",
-        "label": "Ação Rápida"
+        "id": "quickpickTemplates.submenu",
+        "label": "QuickPick Templates"
       }
     ],
     "commands": [
       {
-        "command": "acaoRapida.explainSnippetInContext",
-        "title": "O que faz esse trecho no contexto?",
+        "command": "quickpickTemplates.explainSnippetInContext",
+        "title": "What does this snippet do in context?",
         "icon": "$(question)"
       },
       {
-        "command": "acaoRapida.suggestImprovements",
-        "title": "Sugestão de melhoria",
+        "command": "quickpickTemplates.suggestImprovements",
+        "title": "Improvement suggestion",
         "icon": "$(lightbulb)"
       },
       {
-        "command": "acaoRapida.chooseTemplateFromFolder",
-        "title": "Template da pasta configurada…",
+        "command": "quickpickTemplates.chooseTemplateFromFolder",
+        "title": "Template from configured folder…",
         "icon": "$(folder-opened)"
       }
     ],
     "configuration": {
-      "title": "Ação Rápida Templates",
+      "title": "QuickPick Templates",
       "properties": {
-        "acaoRapida.templatesPath": {
+        "quickpickTemplates.templatesPath": {
           "type": "string",
           "default": "",
-          "markdownDescription": "Caminho da pasta de templates `.md`. Aceita caminho absoluto ou relativo à pasta raiz do workspace. Se vazio, usa a pasta `templates` da própria extensão."
+          "markdownDescription": "Path to the folder of `.md` templates. Accepts absolute or relative path to the root of the workspace. If empty, uses the `templates` folder inside the extension."
+        },
+        "quickpickTemplates.language": {
+          "type": "string",
+          "enum": [
+            "English",
+            "Portuguese",
+            "Spanish"
+          ],
+          "enumDescriptions": [
+            "Responses in English",
+            "Respostas em Português",
+            "Respuestas en Español"
+          ],
+          "default": "English",
+          "markdownDescription": "Language used in templates. Supported values: `English`, `Portuguese`, `Spanish`."
         }
       }
     },
     "menus": {
       "editor/context": [
         {
-          "submenu": "acaoRapida.submenu",
+          "submenu": "quickpickTemplates.submenu",
           "group": "navigation@50",
           "when": "editorHasSelection"
         }
       ],
-      "acaoRapida.submenu": [
+      "quickpickTemplates.submenu": [
         {
-          "command": "acaoRapida.explainSnippetInContext",
-          "group": "1_acao@1"
+          "command": "quickpickTemplates.explainSnippetInContext",
+          "group": "1_quickpick@1"
         },
         {
-          "command": "acaoRapida.suggestImprovements",
-          "group": "1_acao@2"
+          "command": "quickpickTemplates.suggestImprovements",
+          "group": "1_quickpick@2"
         },
         {
-          "command": "acaoRapida.chooseTemplateFromFolder",
-          "group": "1_acao@3"
+          "command": "quickpickTemplates.chooseTemplateFromFolder",
+          "group": "1_quickpick@3"
         }
       ]
     }

@@ -3,7 +3,7 @@
  * (revisar, explicar, refatorar, etc.) — NÃO use como padrão de projeto.
  */
 
-export function pegaTotal(itens: any) {
+export function getTotal(itens: any) {
   let t = 0
   for (var i = 0; i < itens.length; i++) {
     t = t + Number(itens[i].preco) * itens[i].q
@@ -11,7 +11,7 @@ export function pegaTotal(itens: any) {
   return t
 }
 
-export function filtraAcimaDe(lista: { v: number }[], x: number) {
+export function filterAbove(lista: { v: number }[], x: number) {
   var r = []
   for (let j in lista) {
     if (lista[j as any].v > x) {

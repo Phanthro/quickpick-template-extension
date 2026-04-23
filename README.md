@@ -1,41 +1,42 @@
-# Ação Rápida Templates
+# Quickpick Templates
 
-Extensão para Cursor / VS Code que aplica templates `.md` ao trecho de código selecionado e copia o resultado para a área de transferência.
+Extension for Cursor / VS Code that applies `.md` templates to the selected code snippet and copies the result to the clipboard.
 
-## Fluxo
+## Workflow
 
-1. Selecione um trecho de código no editor.
-2. Clique com o botão direito e abra o submenu **Ação Rápida**.
-3. Escolha:
-   - **O que faz esse trecho no contexto?** — template fixo `templates/trecho-no-contexto.md`.
-   - **Sugestão de melhoria** — template fixo `templates/sugestao-melhoria.md`.
-   - **Template da pasta configurada…** — lista os `.md` da pasta em `acaoRapida.templatesPath` (ou `templates/` da extensão). Os dois ficheiros fixos acima **não** aparecem na lista quando apontam para a mesma cópia na extensão (evita duplicar).
-4. O texto final substitui `{{CODE}}` pelo código selecionado e fica na área de transferência.
+1. Select a code snippet in the editor.
+2. Right-click and open the **Quickpick** submenu.
+3. Choose:
 
-## Configurar caminho dos templates
+   * **What does this snippet do in context?** — fixed template `templates/snippet-in-context.md`.
+   * **Improvement suggestion** — fixed template `templates/improvement-suggestion.md`.
+   * **Template from configured folder…** — lists `.md` files from the folder set in `quickpickTemplates.templatesPath` (or the extension's `templates/` folder). The two fixed templates above **do not appear** in the list when pointing to the same copy inside the extension (avoids duplication).
+4. The final text replaces `{{CODE}}` with the selected code and is copied to the clipboard.
 
-`Settings` → pesquise por **Ação Rápida Templates: Templates Path**  
-Chave: `acaoRapida.templatesPath`
+## Configure templates path
 
-- **Absoluto** — usa essa pasta.
-- **Relativo** — relativo à raiz do workspace aberto.
-- **Vazio** — usa `templates/` dentro da extensão instalada.
+`Settings` → search for **Quickpick Templates: Templates Path**
+Key: `quickpickTemplates.templatesPath`
 
-A lista no seletor atualiza quando ficheiros `.md` mudam na pasta vigiada; o botão **Recarregar** força nova leitura.
+* **Absolute** — uses the specified folder.
+* **Relative** — relative to the root of the opened workspace.
+* **Empty** — uses the extension's built-in `templates/` folder.
 
-## Placeholder nos `.md`
+The list updates automatically when `.md` files change in the watched folder; the **Reload** button forces a refresh.
+
+## Placeholder in `.md`
 
 ```md
-Explique o código abaixo:
+Explain the code below:
 
 {{CODE}}
 ```
 
-## Desenvolvimento
+## Development
 
 ```bash
 npm install
 npm run compile
 ```
 
-Pressione `F5` para testar a extensão.
+Press `F5` to test the extension.

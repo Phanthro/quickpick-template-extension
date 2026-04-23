@@ -2,9 +2,9 @@ import * as vscode from "vscode";
 import * as fs from "fs/promises";
 import * as path from "path";
 
-/** Templates fixos do submenu (sempre na extensão). */
-const BUNDLED_CONTEXT_TEMPLATE_REL = path.join("templates", "trecho-no-contexto.md");
-const BUNDLED_IMPROVE_TEMPLATE_REL = path.join("templates", "sugestao-melhoria.md");
+/** Fixed templates in the submenu (always in the extension). */
+const BUNDLED_CONTEXT_TEMPLATE_REL = path.join("templates", "explain-in-context.md");
+const BUNDLED_IMPROVE_TEMPLATE_REL = path.join("templates", "improvement-suggestion.md");
 
 function getBundledFixedTemplatePaths(extensionPath: string): Set<string> {
   const paths = [
@@ -26,11 +26,11 @@ export function activate(context: vscode.ExtensionContext): void {
   const excludeFromFolderPicker = getBundledFixedTemplatePaths(context.extensionPath);
 
   const explainInContext = vscode.commands.registerCommand(
-    "acaoRapida.explainSnippetInContext",
+    "quickpickTemplates.explainSnippetInContext",
     async () => {
       await runWithSelection(async (selectedCode) => {
         const chosen: TemplateOption = {
-          label: "O que faz esse trecho no contexto?",
+          label: "What does this snippet do in context?",
           description: BUNDLED_CONTEXT_TEMPLATE_REL,
           fullPath: bundledContextPath
         };
@@ -40,11 +40,11 @@ export function activate(context: vscode.ExtensionContext): void {
   );
 
   const suggestImprovements = vscode.commands.registerCommand(
-    "acaoRapida.suggestImprovements",
+    "quickpickTemplates.suggestImprovements",
     async () => {
       await runWithSelection(async (selectedCode) => {
         const chosen: TemplateOption = {
-          label: "Sugestão de melhoria",
+          label: "Improvement suggestion",
           description: BUNDLED_IMPROVE_TEMPLATE_REL,
           fullPath: bundledImprovePath
         };
@@ -54,20 +54,20 @@ export function activate(context: vscode.ExtensionContext): void {
   );
 
   const fromFolder = vscode.commands.registerCommand(
-    "acaoRapida.chooseTemplateFromFolder",
-    async () => {
-      await runWithSelection(async (selectedCode) => {
-        const chosen = await showTemplatePickerFromFolder(
-          context.extensionPath,
-          excludeFromFolderPicker
-        );
-        if (!chosen) {
-          return;
-        }
-        await applyTemplateAndCopy(chosen, selectedCode);
-      });
-    }
-  );
+      "quickpickTemplates.chooseTemplateFromFolder",
+      async () => {
+        await runWithSelection(async (selectedCode) => {
+          const chosen = await showTemplatePickerFromFolder(
+            context.extensionPath,
+            excludeFromFolderPicker
+          );
+        
+          if (chosen) {
+            await applyTemplateAndCopy(chosen, selectedCode);
+          }
+        }); 
+      }
+    );
 
   context.subscriptions.push(explainInContext, suggestImprovements, fromFolder);
 }
@@ -77,14 +77,14 @@ async function runWithSelection(
 ): Promise<void> {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
-    vscode.window.showErrorMessage("Nenhum editor ativo.");
+    vscode.window.showErrorMessage("No active editor.");
     return;
   }
 
   const selection = editor.selection;
   if (selection.isEmpty) {
     vscode.window.showWarningMessage(
-      "Selecione um trecho de código antes de usar a Ação Rápida."
+      "Select a code snippet before using the QuickPick Templates."
     );
     return;
   }
@@ -97,16 +97,23 @@ async function applyTemplateAndCopy(
   chosen: TemplateOption,
   selectedCode: string
 ): Promise<void> {
+  const selectedLanguage =
+  vscode.workspace
+    .getConfiguration()
+    .get<string>("quickpickTemplates.language") || "English";
+
   try {
     const templateContent = await fs.readFile(chosen.fullPath, "utf8");
-    const output = templateContent.split("{{CODE}}").join(selectedCode);
+    const output = templateContent
+      .replace(/{{CODE}}/g, selectedCode)
+      .replace(/{{LANGUAGE}}/g, selectedLanguage);
     await vscode.env.clipboard.writeText(output);
     vscode.window.showInformationMessage(
-      `Template aplicado: ${chosen.label}. Conteúdo copiado para a área de transferência.`
+      `Template applied: ${chosen.label} in ${selectedLanguage} language. Content copied to the clipboard.`
     );
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    vscode.window.showErrorMessage(`Falha ao processar template: ${message}`);
+    vscode.window.showErrorMessage(`Failed to process template: ${message}`);
   }
 }
 
@@ -115,14 +122,14 @@ async function showTemplatePickerFromFolder(
   excludeBundledPaths: Set<string>
 ): Promise<TemplateOption | undefined> {
   const quickPick = vscode.window.createQuickPick<TemplateOption>();
-  quickPick.title = "Templates — pasta configurada";
-  quickPick.placeholder = "Selecione um arquivo .md";
+  quickPick.title = "Templates — configured folder";
+  quickPick.placeholder = `Select a .md file`;
   quickPick.matchOnDescription = true;
   quickPick.busy = true;
 
   const refreshButton: vscode.QuickInputButton = {
     iconPath: new vscode.ThemeIcon("refresh"),
-    tooltip: "Recarregar lista"
+    tooltip: "Reload list"
   };
   quickPick.buttons = [refreshButton];
 
@@ -190,15 +197,15 @@ async function showTemplatePickerFromFolder(
     quickPick.items = fromFolder;
     quickPick.busy = false;
     if (fromFolder.length === 0) {
-      quickPick.placeholder = `Nenhum .md extra nesta pasta (os fixos estão no submenu). Pasta: ${templatesDir}`;
+      quickPick.placeholder = `No extra .md files in this folder (the fixed templates are in the submenu). Folder: ${templatesDir}`;
     } else {
-      quickPick.placeholder = "Selecione um template .md";
+      quickPick.placeholder = "Select a .md template";
     }
   };
 
   watchTemplatesDir();
   const configWatcher = vscode.workspace.onDidChangeConfiguration((event) => {
-    if (event.affectsConfiguration("acaoRapida.templatesPath")) {
+    if (event.affectsConfiguration("quickpickTemplates.templatesPath")) {
       templatesDir = getTemplatesDir(extensionPath);
       watchTemplatesDir();
       void loadTemplates();
@@ -231,7 +238,7 @@ async function listMarkdownTemplates(
 
   const markdownFiles = entries
     .filter((name) => name.toLowerCase().endsWith(".md"))
-    .sort((a, b) => a.localeCompare(b, "pt-BR"));
+    .sort((a, b) => a.localeCompare(b, "en-US"));
 
   const defaultTemplates = path.join(extensionPath, "templates");
 
@@ -257,7 +264,7 @@ export function deactivate(): void {
 
 function getTemplatesDir(extensionPath: string): string {
   const config = vscode.workspace.getConfiguration();
-  const configuredPath = (config.get<string>("acaoRapida.templatesPath") ?? "").trim();
+  const configuredPath = (config.get<string>("quickpickTemplates.templatesPath") ?? "").trim();
   if (!configuredPath) {
     return path.join(extensionPath, "templates");
   }

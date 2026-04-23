@@ -36,6 +36,7 @@
     "onCommand:quickpickTemplates.chooseTemplateFromFolder"
   ],
   "license": "MIT",
+  "icon": "images/icon.png",
   "contributes": {
     "submenus": [
       {

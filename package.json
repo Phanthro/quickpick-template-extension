@@ -1,0 +1,88 @@
+{
+  "name": "acao-rapida-templates",
+  "displayName": "Ação Rápida Templates",
+  "description": "Aplica templates .md ao código selecionado e copia para a área de transferência.",
+  "version": "0.0.1",
+  "publisher": "Phanthro",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:acaoRapida.explainSnippetInContext",
+    "onCommand:acaoRapida.suggestImprovements",
+    "onCommand:acaoRapida.chooseTemplateFromFolder"
+  ],
+  "main": "./out/extension.js",
+  "license": "MIT",
+  "contributes": {
+    "submenus": [
+      {
+        "id": "acaoRapida.submenu",
+        "label": "Ação Rápida"
+      }
+    ],
+    "commands": [
+      {
+        "command": "acaoRapida.explainSnippetInContext",
+        "title": "O que faz esse trecho no contexto?",
+        "icon": "$(question)"
+      },
+      {
+        "command": "acaoRapida.suggestImprovements",
+        "title": "Sugestão de melhoria",
+        "icon": "$(lightbulb)"
+      },
+      {
+        "command": "acaoRapida.chooseTemplateFromFolder",
+        "title": "Template da pasta configurada…",
+        "icon": "$(folder-opened)"
+      }
+    ],
+    "configuration": {
+      "title": "Ação Rápida Templates",
+      "properties": {
+        "acaoRapida.templatesPath": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Caminho da pasta de templates `.md`. Aceita caminho absoluto ou relativo à pasta raiz do workspace. Se vazio, usa a pasta `templates` da própria extensão."
+        }
+      }
+    },
+    "menus": {
+      "editor/context": [
+        {
+          "submenu": "acaoRapida.submenu",
+          "group": "navigation@50",
+          "when": "editorHasSelection"
+        }
+      ],
+      "acaoRapida.submenu": [
+        {
+          "command": "acaoRapida.explainSnippetInContext",
+          "group": "1_acao@1"
+        },
+        {
+          "command": "acaoRapida.suggestImprovements",
+          "group": "1_acao@2"
+        },
+        {
+          "command": "acaoRapida.chooseTemplateFromFolder",
+          "group": "1_acao@3"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.11",
+    "@types/vscode": "^1.90.0",
+    "typescript": "^5.5.4"
+  }
+}

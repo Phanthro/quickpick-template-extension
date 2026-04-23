@@ -2,7 +2,7 @@
   "name": "quickpick-templates",
   "displayName": "QuickPick Templates",
   "description": "Apply templates .md to the selected code and copy to the clipboard.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "Phanthro",
   "engines": {
     "vscode": "^1.90.0"

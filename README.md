@@ -2,6 +2,8 @@
 
 Extension for Cursor / VS Code that applies `.md` templates to the selected code snippet and copies the result to the clipboard.
 
+![Demo](images/demo.gif)
+
 ## Workflow
 
 1. Select a code snippet in the editor.

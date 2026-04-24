@@ -26,6 +26,10 @@ Key: `quickpickTemplates.templatesPath`
 
 The list updates automatically when `.md` files change in the watched folder; the **Reload** button forces a refresh.
 
+## Template Store
+
+Browse and discover templates at [quickpick-template.com](https://quickpick-template.com/).
+
 ## Placeholder in `.md`
 
 ```md

@@ -69,7 +69,20 @@ export function activate(context: vscode.ExtensionContext): void {
       }
     );
 
-  context.subscriptions.push(explainInContext, suggestImprovements, fromFolder);
+  const openTemplateStore = vscode.commands.registerCommand(
+    "quickpickTemplates.openTemplateStore",
+    async () => {
+      const storeUrl = vscode.Uri.parse("https://quickpick-template.com/");
+      await vscode.env.openExternal(storeUrl);
+    }
+  );
+
+  context.subscriptions.push(
+    explainInContext,
+    suggestImprovements,
+    fromFolder,
+    openTemplateStore
+  );
 }
 
 async function runWithSelection(
